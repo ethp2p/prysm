@@ -13,6 +13,7 @@ import (
 	"github.com/OffchainLabs/prysm/v6/encoding/bytesutil"
 	mathutil "github.com/OffchainLabs/prysm/v6/math"
 	pbrpc "github.com/OffchainLabs/prysm/v6/proto/prysm/v1alpha1"
+	"github.com/OffchainLabs/prysm/v6/x"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -150,6 +151,8 @@ func (s *Service) pubsubOptions() []pubsub.Option {
 		pubsub.WithGossipSubParams(pubsubGossipParam()),
 		pubsub.WithRawTracer(gossipTracer{host: s.host}),
 	}
+
+	psOpts = x.InterceptPubsubOpts(psOpts)
 
 	if len(s.cfg.StaticPeers) > 0 {
 		directPeersAddrInfos, err := parsePeersEnr(s.cfg.StaticPeers)

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"testing"
@@ -17,16 +17,16 @@ func TestAllFlagsExistInHelp(t *testing.T) {
 		helpFlags = append(helpFlags, group.Flags...)
 	}
 	helpFlags = features.ActiveFlags(helpFlags)
-	appFlags = features.ActiveFlags(appFlags)
+	Flags = features.ActiveFlags(Flags)
 
-	for _, flag := range appFlags {
+	for _, flag := range Flags {
 		if !doesFlagExist(flag, helpFlags) {
 			t.Errorf("Flag %s does not exist in help/usage flags.", flag.Names()[0])
 		}
 	}
 
 	for _, flag := range helpFlags {
-		if !doesFlagExist(flag, appFlags) {
+		if !doesFlagExist(flag, Flags) {
 			t.Errorf("Flag %s does not exist in main.go, "+
 				"but exists in help flags", flag.Names()[0])
 		}

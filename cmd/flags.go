@@ -76,6 +76,24 @@ var (
 		Usage: "Indicates what fraction of p2p messages are sampled for tracing.",
 		Value: 0.20,
 	}
+	// P2PInstrumentFile enables p2p instrumentation to a trace file.
+	P2PInstrumentFile = &cli.StringFlag{
+		Name:  "p2p-instrument-file",
+		Usage: "Path to write p2p trace file (protobuf format). Empty disables file output.",
+		Value: "",
+	}
+	// P2PInstrumentSocket enables the wiretap Unix domain socket.
+	P2PInstrumentSocket = &cli.StringFlag{
+		Name:  "p2p-instrument-socket",
+		Usage: "Path to the wiretap Unix domain socket. Empty disables socket output.",
+		Value: "",
+	}
+	// P2PInstrumentWaitForAttach blocks node startup until a client attaches to the wiretap socket.
+	P2PInstrumentWaitForAttach = &cli.BoolFlag{
+		Name:  "p2p-instrument-wait-for-attach",
+		Usage: "Block startup until an introspector attaches to the p2p instrumentation socket.",
+		Value: false,
+	}
 	// MonitoringHostFlag defines the host used to serve prometheus metrics.
 	MonitoringHostFlag = &cli.StringFlag{
 		Name:  "monitoring-host",

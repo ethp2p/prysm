@@ -26,6 +26,7 @@ import (
 	"github.com/OffchainLabs/prysm/v7/time/slots"
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/ethereum/go-ethereum/p2p/enr"
+	probe "github.com/ethp2p/xray"
 	"github.com/libp2p/go-libp2p"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -159,6 +160,32 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	h, err := libp2p.New(opts...)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to create p2p host")
+	}
+
+	if cfg.InstrumentFile != "" || cfg.InstrumentSocket != "" {
+		var instOpts []probe.Option
+
+		if cfg.InstrumentFile != "" {
+			instOpts = append(instOpts, probe.WithSinkFile(cfg.InstrumentFile))
+		}
+		if cfg.InstrumentSocket != "" {
+			instOpts = append(instOpts, probe.WithIngestAddr(cfg.InstrumentSocket))
+			instOpts = append(instOpts, probe.WithClientName("prysm"))
+			if cfg.InstrumentWaitForAttach {
+				instOpts = append(instOpts, probe.WithWaitForAttach())
+			}
+		}
+
+		ih, err := probe.Wiretap(h, instOpts...)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to create instrumented host")
+		}
+		h = ih
+		log.WithFields(logrus.Fields{
+			"file":            cfg.InstrumentFile,
+			"socket":          cfg.InstrumentSocket,
+			"wait_for_attach": cfg.InstrumentWaitForAttach,
+		}).Info("P2P instrumentation enabled")
 	}
 
 	s.host = h

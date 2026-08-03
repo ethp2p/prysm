@@ -47,3 +47,9 @@ report.txt
 
 # execution client data
 execution/
+
+# Local beacon-node builds and runtime state
+/beacon-chain/beacon-chain
+/prysm-beacon
+/slots.db
+/beacon-chain/p2p/network-keys
